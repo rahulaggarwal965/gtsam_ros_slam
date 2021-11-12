@@ -7,6 +7,11 @@
 using vec3 = gtsam::Vector3;
 using Pose2 = gtsam::Pose2;
 
+enum EdgeType {
+    ODOM = 0x0,
+    SCAN = 0x1,
+};
+
 struct Node {
     int id;
     Pose2 absolute_pose;
@@ -19,12 +24,12 @@ struct Node {
 struct Edge {
     int x1, x2; // from, to
     Pose2 relative_pose; // relative_pose
-    gtsam::Matrix33 cov; // covariance
+    EdgeType type;
 
-    Edge(int x1, int x2, const Pose2 &relative_pose, const gtsam::Matrix33 &cov) 
+    Edge(int x1, int x2, const Pose2 &relative_pose, EdgeType type) 
     : x1(x1), x2(x2),
       relative_pose(relative_pose),
-      cov(cov) {}
+      type(type) {}
 };
 
 #endif

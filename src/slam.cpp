@@ -74,7 +74,8 @@ void SLAM::save(std::string file_name) {
                 {
                     {"from", edge.x1},
                     {"to", edge.x2},
-                    {"relative_pose", {edge.relative_pose.x(), edge.relative_pose.y(), edge.relative_pose.theta()}}
+                    {"relative_pose", {edge.relative_pose.x(), edge.relative_pose.y(), edge.relative_pose.theta()}},
+                    {"type", edge.type},
                 });
         }
         for (const auto &scan_node : this->scan_nodes) {
@@ -172,11 +173,11 @@ void SLAM::state_estimator_callback(const nav_msgs::Odometry &state_estimated_od
             normalized_relative_pose.y(),
             normalized_relative_pose.theta());
     this->graph.add(gtsam::BetweenFactor<Pose2>(idx, idx + 1, normalized_relative_pose, noise));
-    this->edges.emplace_back(idx, idx + 1, normalized_relative_pose, pf.cov);
+    this->edges.emplace_back(idx, idx + 1, normalized_relative_pose, ODOM);
 
     idx++;
 
-    /* this->optimize(10); // 10 is quite arbitary */
+    this->optimize(10); // 10 is quite arbitary
     this->publish(state_estimated_odometry.header.stamp);    
 }
 
@@ -217,6 +218,7 @@ void SLAM::pose_callback(const geometry_msgs::PoseWithCovarianceStamped &pose_co
     
 
     PoseFactor pf = generate_pose_factor(transformed_pose_with_covariance, last_pose_scan, this->min_scan_covariance);
+    this->last_pose_scan = pf.pose;
     /* PoseFactor pf = generate_pose_factor(pose_covariance_stamped.pose, last_pose_scan); */
      
     Pose2 p = create_pose2(
@@ -231,7 +233,7 @@ void SLAM::pose_callback(const geometry_msgs::PoseWithCovarianceStamped &pose_co
     // we don't use these as an initial estimate
     ROS_INFO("Scan edge from %d to %d", last_scan_index, idx);
     this->graph.add(gtsam::BetweenFactor<Pose2>(last_scan_index, idx, normalized_relative_pose, noise));
-    this->edges.emplace_back(last_scan_index, idx, normalized_relative_pose, pf.cov);
+    this->edges.emplace_back(last_scan_index, idx, normalized_relative_pose, SCAN);
     last_scan_index = idx;
 
 }

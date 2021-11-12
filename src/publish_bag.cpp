@@ -90,7 +90,6 @@ int main(int argc, char **argv) {
                 printf("%s\n", m.getDataType().c_str());
                 printf("%f\n", message->transforms[0].transform.rotation.w);
                 printf("%s\n", pub.getTopic().c_str());
-                print("%s")
                 printf("time: %f\n", message->transforms[0].header.stamp.toSec());
                 printf("Latched: %d\n", pub.isLatched());
             }

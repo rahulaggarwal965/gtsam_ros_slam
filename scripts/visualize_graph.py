@@ -55,17 +55,17 @@ for node in graph["scan_nodes"]:
 for edge in graph["edges"]:
     start = edge["from"]
     end = edge["to"]
-    color = "red" if edge["type"] == 0 else "purple"
-    abs_pose = graph["nodes"][start]["pose"]
-    check = add_relative_pose(abs_pose, edge["relative_pose"])
-    dot.node(f"Check{end}", str(end), 
-            pos=f"{check[0] * 10},{check[1] * 10}!",
-            shape="point",
-            color=color,
-            fixedsize="true",
-            width="0.4",
-            height="0.3")
-
-    # dot.edge(f"Odometry{start}", f"Odometry{end}", arrowhead="none")
+#     color = "red" if edge["type"] == 0 else "purple"
+#     abs_pose = graph["nodes"][start]["pose"]
+#     check = add_relative_pose(abs_pose, edge["relative_pose"])
+#     dot.node(f"Check{end}", str(end), 
+#             pos=f"{check[0] * 10},{check[1] * 10}!",
+#             shape="point",
+#             color=color,
+#             fixedsize="true",
+#             width="0.4",
+#             height="0.3")
+# 
+    dot.edge(f"Odometry{start}", f"Odometry{end}", arrowhead="none")
 
 dot.render("../data/graph", view=False)  
